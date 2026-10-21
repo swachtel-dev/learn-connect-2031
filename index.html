@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Learn Connect 2031</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: a hackathon framing strip, then one Learn screen in a browser frame with a new "Connect" tab: instructor coaching left, study groups right, professor's view underneath. Single light look, matching Learn. */
+:root {
+  --ink: #0b1220;
+  --ink-2: #3b4456;
+  --mute: #6b7487;
+  --line: #e3e7ef;
+  --ground: #f4f6fa;
+  --paper: #ffffff;
+  --blue: #2457f5;
+  --blue-soft: #e8eeff;
+  --navy: #0f1f4b;
+  --gold: #f5c94a;
+  --green: #12865a;
+  --green-soft: #e3f5ec;
+  --amber: #b26a00;
+  --amber-soft: #fff3df;
+  --display: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--ground); color: var(--ink); font-family: var(--display);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+}
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 22px; }
+
+/* framing strip */
+.pitch { display: grid; grid-template-columns: auto 1fr 1fr; gap: 28px; align-items: start; }
+.pitch .tag { font-weight: 800; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }
+.pitch h1 { margin: 4px 0 0; font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -.02em; line-height: 1.05; }
+.pitch .cell { min-width: 0; }
+.pitch .cell b { display: block; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); margin-bottom: 4px; }
+.pitch .cell p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); max-width: 46ch; }
+
+/* browser frame */
+.browser { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 24px 60px -30px rgba(15,31,75,.35); }
+.chrome { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); background: #fafbfd; }
+.dot { width: 11px; height: 11px; border-radius: 50%; background: #dfe3ea; }
+.url { margin-left: 10px; flex: 1; min-width: 0; font-size: 12px; color: var(--mute); background: var(--paper); border: 1px solid var(--line); border-radius: 7px; padding: 5px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.app { display: grid; grid-template-columns: 58px 1fr; }
+.rail { border-right: 1px solid var(--line); display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 18px 0; }
+.rail i { width: 20px; height: 20px; border-radius: 6px; background: var(--navy); opacity: .9; display: block; }
+.rail i.ghost { background: none; border: 2px solid var(--ink-2); opacity: .55; border-radius: 50%; }
+.rail .me { margin-top: 18px; width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+
+.main { min-width: 0; }
+.head { display: flex; justify-content: space-between; gap: 16px; padding: 22px 28px 0; flex-wrap: wrap; }
+.head h2 { margin: 0; font-size: clamp(22px, 3vw, 32px); font-weight: 800; letter-spacing: -.02em; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; text-wrap: balance; }
+.pill-future { font-size: 11px; font-weight: 700; letter-spacing: .1em; background: var(--gold); color: var(--ink); border-radius: 999px; padding: 4px 10px; }
+.inst-chip { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 6px 6px 6px 8px; }
+.inst-chip small { display: block; font-size: 11px; color: var(--mute); }
+.inst-chip strong { font-size: 14px; }
+.grade { background: var(--blue-soft); border-radius: 999px; padding: 8px 18px; text-align: center; font-size: 11px; color: var(--ink-2); }
+.grade b { display: block; font-size: 16px; color: var(--blue); }
+
+.tabs { display: flex; gap: 30px; padding: 18px 28px 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tabs span { padding-bottom: 12px; font-size: 15px; font-weight: 500; white-space: nowrap; color: var(--ink); }
+.tabs span.on { color: var(--blue); font-weight: 700; border-bottom: 3px solid var(--blue); }
+.new { font-size: 10px; font-weight: 800; letter-spacing: .08em; color: #fff; background: var(--blue); border-radius: 4px; padding: 2px 5px; margin-left: 6px; vertical-align: 2px; }
+
+.stage { background: var(--ground); padding: 22px 28px 28px; display: grid; gap: 18px; }
+
+.nudge { display: flex; align-items: center; gap: 16px; background: var(--navy); color: #fff; border-radius: 12px; padding: 14px 18px; flex-wrap: wrap; }
+.nudge p { margin: 0; flex: 1; min-width: 220px; font-size: 15px; line-height: 1.45; }
+.nudge p b { color: var(--gold); }
+.btn { font: inherit; font-weight: 700; font-size: 14px; border-radius: 8px; padding: 10px 16px; border: 2px solid var(--blue); cursor: pointer; white-space: nowrap; }
+.btn.solid { background: var(--blue); color: #fff; }
+.btn.line { background: var(--paper); color: var(--blue); }
+.btn.gold { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+
+.cols { display: grid; grid-template-columns: 1fr 1.15fr; gap: 18px; align-items: start; }
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 22px; min-width: 0; }
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); }
+.card h3 { margin: 4px 0 0; font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
+
+/* instructor */
+.prof { display: flex; gap: 16px; align-items: center; margin-top: 16px; }
+.face { flex: none; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 20px; color: #fff; background: linear-gradient(140deg, #2457f5, #0f1f4b); position: relative; }
+.face::after { content: ""; position: absolute; right: 2px; bottom: 2px; width: 14px; height: 14px; border-radius: 50%; background: #22c07a; border: 3px solid var(--paper); }
+.prof strong { font-size: 17px; display: block; }
+.prof small { color: var(--mute); font-size: 13px; line-height: 1.4; display: block; }
+.quote { margin: 16px 0 0; padding: 14px 16px; background: var(--ground); border-radius: 10px; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+.quote::before { content: "From Prof. Okafor"; display: block; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); margin-bottom: 4px; }
+
+.seg { display: flex; gap: 6px; margin-top: 18px; background: var(--ground); padding: 4px; border-radius: 10px; }
+.seg span { flex: 1; text-align: center; font-size: 13px; font-weight: 600; padding: 8px 6px; border-radius: 7px; color: var(--ink-2); }
+.seg span.on { background: var(--paper); color: var(--ink); box-shadow: 0 1px 3px rgba(15,31,75,.12); font-weight: 700; }
+
+.days { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 16px; }
+.day { display: grid; gap: 6px; align-content: start; }
+.day b { font-size: 12px; text-align: center; color: var(--ink-2); }
+.day b small { display: block; font-weight: 500; color: var(--mute); }
+.slot { font-size: 13px; font-weight: 600; text-align: center; padding: 8px 4px; border: 1.5px solid var(--line); border-radius: 8px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.slot.taken { color: #b6bccb; text-decoration: line-through; background: var(--ground); }
+.slot.pick { border-color: var(--blue); background: var(--blue); color: #fff; }
+.book { margin-top: 16px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 16px; }
+.book p { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.45; }
+.book p b { color: var(--ink); }
+
+.tutor { margin-top: 14px; display: flex; gap: 12px; align-items: center; border: 1px dashed #c9d2e6; border-radius: 10px; padding: 12px 14px; }
+.tutor .mini { flex: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--green-soft); color: var(--green); font-weight: 800; font-size: 13px; }
+.tutor p { margin: 0; font-size: 13.5px; line-height: 1.4; flex: 1; min-width: 0; color: var(--ink-2); }
+.tutor p b { color: var(--ink); }
+.tutor a { font-size: 13.5px; font-weight: 700; color: var(--blue); text-decoration: none; white-space: nowrap; }
+
+/* study groups */
+.gh { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; }
+.gh a { font-size: 14px; font-weight: 700; color: var(--blue); text-decoration: none; }
+.groups { display: grid; gap: 12px; margin-top: 16px; }
+.group { display: grid; grid-template-columns: 64px 1fr auto; gap: 16px; align-items: center; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.group.hot { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+.when { text-align: center; border-right: 1px solid var(--line); padding-right: 14px; }
+.when b { display: block; font-size: 11px; letter-spacing: .1em; color: var(--blue); }
+.when strong { display: block; font-size: 24px; font-weight: 800; line-height: 1.05; }
+.when small { font-size: 11.5px; color: var(--mute); font-variant-numeric: tabular-nums; }
+.gbody { min-width: 0; }
+.gbody .k { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mute); }
+.gbody h4 { margin: 2px 0 6px; font-size: 16px; font-weight: 700; }
+.meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-2); }
+.stack { display: flex; }
+.stack i { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--paper); margin-left: -7px; display: grid; place-items: center; font-style: normal; font-size: 10px; font-weight: 700; color: #fff; }
+.stack i:first-child { margin-left: 0; }
+.chip { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 3px 9px; }
+.chip.prof { background: var(--gold); color: var(--ink); }
+.chip.fit { background: var(--green-soft); color: var(--green); }
+.chip.few { background: var(--amber-soft); color: var(--amber); }
+
+/* professor view */
+.pv { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 18px; }
+.pv .card h3 { font-size: 17px; }
+.big { font-size: 40px; font-weight: 800; letter-spacing: -.03em; line-height: 1; margin-top: 12px; font-variant-numeric: tabular-nums; }
+.big span { font-size: 16px; font-weight: 600; color: var(--mute); letter-spacing: 0; }
+.bar { height: 8px; border-radius: 99px; background: var(--ground); margin-top: 12px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 79%; background: var(--green); border-radius: 99px; }
+.pv p { margin: 10px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+.quiet { display: grid; gap: 8px; margin-top: 12px; }
+.quiet div { display: flex; align-items: center; gap: 10px; font-size: 13.5px; }
+.quiet div span { flex: 1; min-width: 0; color: var(--ink-2); }
+.quiet div span b { color: var(--ink); }
+.quiet a { font-size: 13px; font-weight: 700; color: var(--blue); text-decoration: none; }
+.av { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; }
+.label-row { display: flex; align-items: center; gap: 10px; }
+.label-row .vw { font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--ink); background: var(--gold); border-radius: 6px; padding: 4px 8px; }
+.label-row span { font-size: 14px; color: var(--ink-2); }
+
+@media (max-width: 980px) {
+  .pitch { grid-template-columns: 1fr; gap: 12px; }
+  .cols, .pv { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .app { grid-template-columns: 1fr; }
+  .rail { display: none; }
+  .head, .tabs { padding-left: 16px; padding-right: 16px; }
+  .stage { padding: 16px; }
+  .group { grid-template-columns: 54px 1fr; }
+  .group .btn { grid-column: 1 / -1; }
+  .days { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <section class="pitch">
+    <div class="cell">
+      <div class="tag">Rize Hackathon · 2031</div>
+      <h1>Learn Connect</h1>
+    </div>
+    <div class="cell">
+      <b>The problem</b>
+      <p>Online students rarely build a relationship with their instructor or classmates, and motivation, trust and engagement are what predict whether they finish.</p>
+    </div>
+    <div class="cell">
+      <b>The idea</b>
+      <p>Put the people inside the course. One tab in Learn to book time with your professor or a tutor, or join a remote study group of classmates working on the same thing this week.</p>
+    </div>
+  </section>
+
+  <div class="browser" role="img" aria-label="Mockup of the Rize Learn course page with a new Connect tab showing instructor coaching slots, study groups, and the instructor's engagement view">
+    <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">app.rize.education/courses/9642/connect</span></div>
+    <div class="app">
+      <nav class="rail" aria-hidden="true">
+        <i class="ghost"></i><i class="ghost"></i><i class="ghost"></i>
+        <i></i><i></i><i></i><i></i>
+        <span class="me">JT</span>
+      </nav>
+
+      <div class="main">
+        <div class="head">
+          <h2>Principles of Microeconomics <span class="pill-future">SPRING 2031</span></h2>
+          <div class="inst-chip">
+            <div class="face" style="width:38px;height:38px;font-size:13px">DO</div>
+            <div><small>Instructor</small><strong>Prof. Dana Okafor</strong></div>
+            <div class="grade"><b>B+</b>Current Grade</div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <span>Current Week</span><span>Announcements</span><span>Course Schedule</span><span>Syllabus</span><span>Grades</span><span class="on">Connect<span class="new">NEW</span></span><span>Live Sessions</span>
+        </div>
+
+        <div class="stage">
+
+          <div class="nudge">
+            <p><b>Unit 5: Elasticity</b> is where a lot of students get stuck. 4 classmates are meeting Thursday night to work the problem set together, and Prof. Okafor has open coaching time Wednesday.</p>
+            <button class="btn gold" type="button">Save me a seat</button>
+          </div>
+
+          <div class="cols">
+
+            <section class="card">
+              <div class="eyebrow">Your instructor</div>
+              <h3>Book 1:1 coaching</h3>
+              <div class="prof">
+                <div class="face">DO</div>
+                <div>
+                  <strong>Prof. Dana Okafor</strong>
+                  <small>Teaches this course at your college · 312 coaching sessions with Rize students</small>
+                </div>
+              </div>
+              <p class="quote">Bring anything: a problem you can't crack, a grade you want to talk through, or a week that's falling apart. Twenty minutes is plenty to get unstuck.</p>
+
+              <div class="seg"><span class="on">Coaching</span><span>Exam prep</span><span>Just say hi</span></div>
+
+              <div class="days">
+                <div class="day"><b>Tue<small>Feb 11</small></b><span class="slot taken">4:00</span><span class="slot">4:30</span></div>
+                <div class="day"><b>Wed<small>Feb 12</small></b><span class="slot">12:00</span><span class="slot pick">7:30 PM</span></div>
+                <div class="day"><b>Thu<small>Feb 13</small></b><span class="slot taken">9:00</span><span class="slot">9:30</span></div>
+                <div class="day"><b>Sat<small>Feb 15</small></b><span class="slot">10:00</span><span class="slot">10:30</span></div>
+              </div>
+
+              <div class="book">
+                <p><b>Wed, Feb 12 · 7:30 PM CT</b><br>Video call · 20 min · added to your calendar</p>
+                <button class="btn solid" type="button">Book with Prof. Okafor</button>
+              </div>
+
+              <div class="tutor">
+                <div class="mini">MR</div>
+                <p><b>Need help sooner?</b> Marcus, an econ tutor, is on call tonight until 11 PM CT.</p>
+                <a href="#">Ask Marcus</a>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="gh">
+                <div><div class="eyebrow">Your classmates</div><h3>Study groups this week</h3></div>
+                <a href="#">+ Start a group</a>
+              </div>
+              <div class="groups">
+
+                <div class="group hot">
+                  <div class="when"><b>THU</b><strong>13</strong><small>9:00 PM</small></div>
+                  <div class="gbody">
+                    <div class="k">Unit 5 · Problem set</div>
+                    <h4>Elasticity, worked together</h4>
+                    <div class="meta">
+                      <span class="stack"><i style="background:#2457f5">AL</i><i style="background:#12865a">RK</i><i style="background:#c2410c">MB</i><i style="background:#7c3aed">TS</i></span>
+                      4 of 6 seats · <span class="chip fit">Fits your evenings</span>
+                    </div>
+                  </div>
+                  <button class="btn solid" type="button">Join</button>
+                </div>
+
+                <div class="group">
+                  <div class="when"><b>SUN</b><strong>16</strong><small>2:00 PM</small></div>
+                  <div class="gbody">
+                    <div class="k">Exam 1 · Review</div>
+                    <h4>Midterm review sprint</h4>
+                    <div class="meta">
+                      <span class="stack"><i style="background:#0f1f4b">DO</i><i style="background:#0891b2">JP</i><i style="background:#be185d">NW</i><i style="background:#4d7c0f">EH</i><i style="background:#b45309">+7</i></span>
+                      11 of 16 · <span class="chip prof">Prof. Okafor drops in</span>
+                    </div>
+                  </div>
+                  <button class="btn line" type="button">Join</button>
+                </div>
+
+                <div class="group">
+                  <div class="when"><b>TUE</b><strong>11</strong><small>6:00 AM</small></div>
+                  <div class="gbody">
+                    <div class="k">Weekly · Before-work crew</div>
+                    <h4>Early birds: this week's reading</h4>
+                    <div class="meta">
+                      <span class="stack"><i style="background:#9333ea">CV</i><i style="background:#0f766e">LG</i></span>
+                      2 of 5 · <span class="chip few">Students with full-time jobs</span>
+                    </div>
+                  </div>
+                  <button class="btn line" type="button">Join</button>
+                </div>
+
+              </div>
+            </section>
+          </div>
+
+          <div class="label-row"><span class="vw">Instructor view</span><span>What Prof. Okafor sees on the same tab</span></div>
+
+          <div class="pv">
+            <section class="card">
+              <div class="eyebrow">Connected this week</div>
+              <div class="big">22 <span>of 28 students</span></div>
+              <div class="bar"><i></i></div>
+              <p>Met you, a tutor, or a study group since Monday. Last term's section averaged 9.</p>
+            </section>
+            <section class="card">
+              <div class="eyebrow">Haven't connected yet</div>
+              <div class="quiet">
+                <div><span class="av" style="background:#c2410c">KM</span><span><b>Kayla M.</b> · missed Quiz 4</span><a href="#">Invite</a></div>
+                <div><span class="av" style="background:#0891b2">DR</span><span><b>Devon R.</b> · works nights</span><a href="#">Invite</a></div>
+                <div><span class="av" style="background:#4d7c0f">SA</span><span><b>Sam A.</b> · no logins in 6 days</span><a href="#">Invite</a></div>
+              </div>
+            </section>
+            <section class="card">
+              <div class="eyebrow">Your coaching hours</div>
+              <div class="big">5 <span>of 8 booked</span></div>
+              <p>Most asked about: <b>price elasticity</b> and <b>reading demand curves</b>. Worth a 5-minute video in Unit 5?</p>
+            </section>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
